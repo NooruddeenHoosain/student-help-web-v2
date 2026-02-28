@@ -1,6 +1,53 @@
 <Supabase>
- const SUPABASE_URL = 'YOUR_PROJECT_URL';
-const SUPABASE_ANON_KEY = 'YOUR_ANON_KEY';
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const { createClient } = supabase;
+
+  const SUPABASE_URL = 'YOUR_PROJECT_URL';
+  const SUPABASE_ANON_KEY = 'YOUR_ANON_KEY';
+
+  const client = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  async function signUp() {
+    const name = document.getElementById('name').value;
+    const surname = document.getElementById('surname').value;
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+
+    const { data, error } = await client.auth.signUp({
+      email: email,
+      password: password
+    });
+
+    if (error) {
+      alert(error.message);
+      return;
+    }
+
+    await client.from('profiles').insert([
+      { id: data.user.id, name: name, surname: surname, reputation: 0 }
+    ]);
+
+    alert('Signed up successfully!');
+  }
+
+  async function logIn() {
+    const email = document.getElementById('loginEmail').value;
+    const password = document.getElementById('loginPassword').value;
+
+    const { error } = await client.auth.signInWithPassword({
+      email: email,
+      password: password
+    });
+
+    if (error) {
+      alert(error.message);
+      return;
+    }
+
+    alert('Logged in successfully!');
+  }
+</script>
 <!DOCTYPE html>
 <html lang="en">
 <head>
